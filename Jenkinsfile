@@ -71,35 +71,83 @@ pipeline {
     
     post {
         success {
-            echo 'Pipeline executed successfully!'
-            echo 'Application deployed and all tests passed!'
-            
-            mail to: "${env.RECIPIENT_EMAIL}",
-                 subject: "SUCCESS: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: """Build Successful!
-                 
+            script {
+                echo 'Pipeline executed successfully!'
+                echo 'Application deployed and all tests passed!'
+                
+                def testResultAction = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction.class)
+                def testSummary = "No test results found"
+                def totalTests = 0
+                def passedTests = 0
+                def failedTests = 0
+                def skippedTests = 0
+                
+                if (testResultAction != null) {
+                    totalTests = testResultAction.getTotalCount()
+                    failedTests = testResultAction.getFailCount()
+                    skippedTests = testResultAction.getSkipCount()
+                    passedTests = totalTests - failedTests - skippedTests
+                    testSummary = """Test Results:
+  Total Tests: ${totalTests}
+  Passed: ${passedTests}
+  Failed: ${failedTests}
+  Skipped: ${skippedTests}"""
+                }
+                
+                mail to: "${env.RECIPIENT_EMAIL}",
+                     subject: "SUCCESS: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                     body: """Build Successful!
+
 Job: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
 Status: SUCCESS
 
+${testSummary}
+
 All Selenium tests passed successfully.
 
-View Build: ${env.BUILD_URL}"""
+View Build: ${env.BUILD_URL}
+View Test Report: ${env.BUILD_URL}testReport/"""
+            }
         }
         failure {
-            echo 'Pipeline failed. Check the logs for details.'
-            
-            mail to: "${env.RECIPIENT_EMAIL}",
-                 subject: "FAILED: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: """Build Failed!
-                 
+            script {
+                echo 'Pipeline failed. Check the logs for details.'
+                
+                def testResultAction = currentBuild.rawBuild.getAction(hudson.tasks.junit.TestResultAction.class)
+                def testSummary = "No test results found"
+                def totalTests = 0
+                def passedTests = 0
+                def failedTests = 0
+                def skippedTests = 0
+                
+                if (testResultAction != null) {
+                    totalTests = testResultAction.getTotalCount()
+                    failedTests = testResultAction.getFailCount()
+                    skippedTests = testResultAction.getSkipCount()
+                    passedTests = totalTests - failedTests - skippedTests
+                    testSummary = """Test Results:
+  Total Tests: ${totalTests}
+  Passed: ${passedTests}
+  Failed: ${failedTests}
+  Skipped: ${skippedTests}"""
+                }
+                
+                mail to: "${env.RECIPIENT_EMAIL}",
+                     subject: "FAILED: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                     body: """Build Failed!
+
 Job: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
 Status: FAILURE
 
+${testSummary}
+
 Please check the test results and logs for details.
 
-View Build: ${env.BUILD_URL}"""
+View Build: ${env.BUILD_URL}
+View Test Report: ${env.BUILD_URL}testReport/"""
+            }
         }
         always {
             echo 'Pipeline completed.'
