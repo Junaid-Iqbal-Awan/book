@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         DEPLOY_PATH = '.'
-        RECIPIENT_EMAIL = 'haseebahmad8986@gmail.com'
+        ADMIN_EMAIL = 'haseebahmad8986@gmail.com'
     }
     
     stages {
@@ -11,6 +11,22 @@ pipeline {
             steps {
                 echo 'Checking out code from GitHub...'
                 checkout scm
+            }
+        }
+        
+        stage('Get Committer Email') {
+            steps {
+                script {
+                    env.GIT_COMMITTER_EMAIL = sh(
+                        script: 'git log -1 --pretty=format:"%ae"',
+                        returnStdout: true
+                    ).trim()
+                    env.GIT_COMMITTER_NAME = sh(
+                        script: 'git log -1 --pretty=format:"%an"',
+                        returnStdout: true
+                    ).trim()
+                    echo "Commit by: ${env.GIT_COMMITTER_NAME} (${env.GIT_COMMITTER_EMAIL})"
+                }
             }
         }
         
@@ -84,12 +100,17 @@ pipeline {
     
     post {
         success {
-            echo 'Pipeline executed successfully!'
-            echo 'Application deployed and all tests passed!'
-            
-            mail to: "${env.RECIPIENT_EMAIL}",
-                 subject: "SUCCESS: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: """Build Successful!
+            script {
+                echo 'Pipeline executed successfully!'
+                echo 'Application deployed and all tests passed!'
+                
+                def recipientEmail = env.GIT_COMMITTER_EMAIL ?: env.ADMIN_EMAIL
+                
+                mail to: recipientEmail,
+                     subject: "SUCCESS: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                     body: """Build Successful!
+
+Triggered by: ${env.GIT_COMMITTER_NAME} (${env.GIT_COMMITTER_EMAIL})
 
 Job: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
@@ -100,13 +121,19 @@ Test Results: 30 Tests Executed
 
 View Build: ${env.BUILD_URL}
 View Test Report: ${env.BUILD_URL}testReport/"""
+            }
         }
         failure {
-            echo 'Pipeline failed. Check the logs for details.'
-            
-            mail to: "${env.RECIPIENT_EMAIL}",
-                 subject: "FAILED: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: """Build Failed!
+            script {
+                echo 'Pipeline failed. Check the logs for details.'
+                
+                def recipientEmail = env.GIT_COMMITTER_EMAIL ?: env.ADMIN_EMAIL
+                
+                mail to: recipientEmail,
+                     subject: "FAILED: Jenkins Build ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                     body: """Build Failed!
+
+Triggered by: ${env.GIT_COMMITTER_NAME} (${env.GIT_COMMITTER_EMAIL})
 
 Job: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
@@ -116,6 +143,7 @@ Some tests may have FAILED. Please check the test report for details.
 
 View Build: ${env.BUILD_URL}
 View Test Report: ${env.BUILD_URL}testReport/"""
+            }
         }
         always {
             echo 'Pipeline completed.'
