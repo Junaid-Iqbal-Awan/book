@@ -6,6 +6,7 @@ node_modules/
 Frontend/dist/
 Frontend/.vite/
 Backend/dist/
+SeleniumTests/target/
 
 # Logs
 npm-debug.log*
