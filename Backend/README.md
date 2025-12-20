@@ -1,4 +1,4 @@
-# Backend (MongoDB + Multer Local Uploads)
+  # Backend (MongoDB + Multer Local Uploads)
 
 This backend now uses:
 
@@ -47,3 +47,4 @@ Server will start at <http://localhost:5000> and serve static files from `Backen
 - Uploaded files are stored in `Backend/public` and are accessible by URL like `http://localhost:5000/<filename>`.
 - Book responses include an `_id` field compatible with the frontend.
 - Newsletter duplicate email returns HTTP 409 (conflict).
+hi
