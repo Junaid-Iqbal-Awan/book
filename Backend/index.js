@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -33,8 +34,14 @@ app.use("/api", apiRouter);
 const publicDir = path.join(__dirname, "public");
 app.use(express.static(publicDir));
 
-// Remove catch-all route since backend only serves API + static files
-// Frontend (Vite) handles its own routing
+const frontendDistDir = path.resolve(__dirname, "..", "Frontend", "dist");
+
+if (fs.existsSync(frontendDistDir)) {
+  app.use(express.static(frontendDistDir));
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(frontendDistDir, "index.html"));
+  });
+}
 
 async function start() {
   try {
