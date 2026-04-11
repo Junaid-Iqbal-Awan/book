@@ -1,10 +1,6 @@
 pipeline {
   agent any
 
-  options {
-    timestamps()
-  }
-
   environment {
     COMPOSE_FILE = "docker-compose.part2.yml"
   }
