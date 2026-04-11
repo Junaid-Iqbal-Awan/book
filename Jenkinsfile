@@ -29,21 +29,21 @@ pipeline {
 
     stage('Deploy Part II Stack') {
       steps {
-        sh 'docker compose -f ${COMPOSE_FILE} down || true'
-        sh 'docker compose -f ${COMPOSE_FILE} up -d'
+        sh 'docker-compose -f ${COMPOSE_FILE} down || true'
+        sh 'docker-compose -f ${COMPOSE_FILE} up -d'
       }
     }
 
     stage('Health Check') {
       steps {
-        sh 'docker compose -f ${COMPOSE_FILE} ps'
+        sh 'docker-compose -f ${COMPOSE_FILE} ps'
       }
     }
   }
 
   post {
     always {
-      sh 'docker compose -f ${COMPOSE_FILE} ps || true'
+      sh 'docker-compose -f ${COMPOSE_FILE} ps || true'
     }
   }
 }
