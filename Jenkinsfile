@@ -12,6 +12,12 @@ pipeline {
       }
     }
 
+    stage('Prepare Env') {
+      steps {
+        sh 'test -f .env || cp .env.example .env'
+      }
+    }
+
     stage('Prepare Images') {
       steps {
         script {
