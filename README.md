@@ -147,3 +147,4 @@ Recommended inbound ports on Jenkins EC2:
 3. Add collaborator: `qasimalik@gmail.com`.
 4. Include report screenshots for all micro steps and required files.
 test 
+test 
