@@ -1,0 +1,33 @@
+services:
+  app:
+    container_name: bookstore-app-p1
+    image: junaid283/bookstore-app:part1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      MONGO_URI: mongodb://mongo-p1:27017/hogwarts_bookstore
+      PORT: 5000
+      NODE_ENV: production
+      UPLOAD_DIR: /app/Backend/public
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-junaidiqbalpro19@gmail.com}
+    depends_on:
+      - mongo
+    ports:
+      - "${PART1_APP_PORT:-5000}:5000"
+    volumes:
+      - uploads_data_p1:/app/Backend/public
+    restart: unless-stopped
+
+  mongo:
+    container_name: mongo-p1
+    image: mongo:7
+    volumes:
+      - mongo_data_p1:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo_data_p1:
+  uploads_data_p1:
