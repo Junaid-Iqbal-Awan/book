@@ -2,6 +2,7 @@ package com.bookstore.tests;
 
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -81,7 +82,13 @@ public class AuthTests extends BaseUiTest {
   private void closeLoginModalIfOpen() {
     By overlay = By.cssSelector(".modal-overlay");
     if (!driver.findElements(overlay).isEmpty()) {
-      waitForClickable(overlay).click();
+      try {
+        wait.until(ExpectedConditions.refreshed(
+          ExpectedConditions.elementToBeClickable(overlay)
+        )).click();
+      } catch (StaleElementReferenceException ignored) {
+        // Overlay detached before click; continue to visibility check.
+      }
       wait.until(ExpectedConditions.invisibilityOfElementLocated(overlay));
     }
   }

@@ -3,6 +3,7 @@ package com.bookstore.tests;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +25,10 @@ public class NavigationTests extends BaseUiTest {
   void headerShowsNavLinks() {
     open("/");
     waitForVisible(By.cssSelector("header nav"));
+    wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(
+      By.cssSelector("header nav a"),
+      3
+    ));
     List<String> links = driver.findElements(By.cssSelector("header nav a"))
       .stream()
       .map(el -> el.getText().trim())
