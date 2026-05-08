@@ -19,6 +19,10 @@ function Login({ onClose }) {
       // Set user in context
       setAuthUser(response.data.user);
 
+      if (onClose) {
+        onClose();
+      }
+
       // Check if the user is an admin
       if (response.data.user.isAdmin) {
         navigate("/admin-dashboard"); // Redirect to the admin dashboard
@@ -33,6 +37,9 @@ function Login({ onClose }) {
   };
 
   const handleSignupRedirect = () => {
+    if (onClose) {
+      onClose();
+    }
     navigate("/signup"); // Redirect to the signup page
   };
 

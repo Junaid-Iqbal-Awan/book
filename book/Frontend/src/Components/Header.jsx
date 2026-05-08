@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./images/hogwartsCrest.png";
 import Login from "./Login";
 import Logout from "./Logout";
@@ -10,6 +10,12 @@ function Header() {
   const [showLogin, setShowLogin] = useState(false);
 
   const toggleLogin = () => setShowLogin((prev) => !prev);
+
+  useEffect(() => {
+    if (authUser) {
+      setShowLogin(false);
+    }
+  }, [authUser]);
 
   return (
     <header className="header">
