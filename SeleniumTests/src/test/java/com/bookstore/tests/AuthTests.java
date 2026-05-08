@@ -6,6 +6,8 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -81,14 +83,13 @@ public class AuthTests extends BaseUiTest {
 
   private void closeLoginModalIfOpen() {
     By overlay = By.cssSelector(".modal-overlay");
-    if (!driver.findElements(overlay).isEmpty()) {
-      try {
-        wait.until(ExpectedConditions.refreshed(
-          ExpectedConditions.elementToBeClickable(overlay)
-        )).click();
-      } catch (StaleElementReferenceException ignored) {
-        // Overlay detached before click; continue to visibility check.
+    try {
+      List<WebElement> overlays = driver.findElements(overlay);
+      if (!overlays.isEmpty()) {
+        overlays.get(0).click();
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(overlay));
       }
+    } catch (StaleElementReferenceException ignored) {
       wait.until(ExpectedConditions.invisibilityOfElementLocated(overlay));
     }
   }

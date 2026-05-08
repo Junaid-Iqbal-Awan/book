@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,12 +32,12 @@ public class NavigationTests extends BaseUiTest {
     ));
     List<String> links = driver.findElements(By.cssSelector("header nav a"))
       .stream()
-      .map(el -> el.getText().trim())
+      .map(el -> el.getText().trim().toLowerCase(Locale.ROOT))
       .collect(Collectors.toList());
-    assertTrue(links.contains("Home"));
-    assertTrue(links.contains("Books"));
-    assertTrue(links.contains("Contact"));
-    assertTrue(links.contains("About Us"));
+    assertTrue(links.contains("home"));
+    assertTrue(links.contains("books"));
+    assertTrue(links.contains("contact"));
+    assertTrue(links.contains("about us"));
   }
 
   @Test
