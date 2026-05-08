@@ -23,7 +23,8 @@ public class NavigationTests extends BaseUiTest {
   @Test
   void headerShowsNavLinks() {
     open("/");
-    List<String> links = driver.findElements(By.cssSelector(".nav-links a"))
+    waitForVisible(By.cssSelector("header nav"));
+    List<String> links = driver.findElements(By.cssSelector("header nav a"))
       .stream()
       .map(el -> el.getText().trim())
       .collect(Collectors.toList());

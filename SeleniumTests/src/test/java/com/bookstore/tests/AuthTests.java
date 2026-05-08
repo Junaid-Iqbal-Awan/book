@@ -3,6 +3,7 @@ package com.bookstore.tests;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,8 +79,10 @@ public class AuthTests extends BaseUiTest {
   }
 
   private void closeLoginModalIfOpen() {
-    if (!driver.findElements(By.cssSelector(".modal-overlay")).isEmpty()) {
-      driver.findElement(By.cssSelector(".modal-overlay")).click();
+    By overlay = By.cssSelector(".modal-overlay");
+    if (!driver.findElements(overlay).isEmpty()) {
+      waitForClickable(overlay).click();
+      wait.until(ExpectedConditions.invisibilityOfElementLocated(overlay));
     }
   }
 }
