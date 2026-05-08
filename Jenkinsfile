@@ -45,7 +45,7 @@ pipeline {
 
     stage('Selenium Tests') {
       steps {
-        sh 'docker run --rm --network host -e APP_BASE_URL=${APP_BASE_URL} -v $WORKSPACE/SeleniumTests:/workspace -w /workspace ${TEST_IMAGE} mvn -q test'
+        sh 'docker run --rm --network host --memory=800m --memory-swap=2g -e APP_BASE_URL=${APP_BASE_URL} -v $WORKSPACE/SeleniumTests:/workspace -w /workspace ${TEST_IMAGE} mvn test'
       }
       post {
         always {
