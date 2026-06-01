@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bookstore-web
+  template:
+    metadata:
+      labels:
+        app: bookstore-web
+    spec:
+      containers:
+        - name: web
+          image: bookstore-web:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://bookstore-mongo:27017/hogwarts_bookstore"
+            - name: PORT
+              value: "5000"
+            - name: NODE_ENV
+              value: "production"
+            - name: UPLOAD_DIR
+              value: "/app/Backend/public"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
